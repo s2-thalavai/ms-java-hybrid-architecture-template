@@ -377,3 +377,58 @@ Wires everything + Spring Boot + config.
 
 ----------
 
+```bash
+mvn archetype:generate \
+   -DgroupId=com.procureengine.p2p \
+   -DartifactId=ms-p2p-bp-onboarding-service \
+   -Dversion=1.0.0-SNAPSHOT \
+   -Dpackage=com.procureengine.p2p.bp.onboarding \
+   -DinteractiveMode=false \
+   -DarchetypeArtifactId=maven-archetype-quickstart
+
+cd ms-p2p-bp-onboarding-service
+rm -rf src
+sed -i 's/<packaging>jar/<packaging>pom/' pom.xml
+
+
+mvn archetype:generate \
+   -DgroupId=com.procureengine.p2p \
+   -DartifactId=bp-onboarding-domain \
+   -Dpackage=com.procureengine.p2p.bp.onboarding.domain \
+   -DinteractiveMode=false \
+   -DarchetypeArtifactId=maven-archetype-quickstart
+   
+   
+mvn archetype:generate \
+	-DgroupId=com.procureengine.p2p \
+	-DartifactId=bp-onboarding-application \
+	-Dpackage=com.procureengine.p2p.bp.onboarding.application \
+	-DinteractiveMode=false \
+	-DarchetypeArtifactId=maven-archetype-quickstart
+
+
+mvn archetype:generate \
+   -DgroupId=com.procureengine.p2p \
+   -DartifactId=bp-onboarding-adapters \
+   -Dpackage=com.procureengine.p2p.bp.onboarding.adapters \
+   -DinteractiveMode=false \
+   -DarchetypeArtifactId=maven-archetype-quickstart
+
+
+mvn archetype:generate \
+   -DgroupId=com.procureengine.p2p \
+   -DartifactId=bp-onboarding-bootstrap \
+   -Dpackage=com.procureengine.p2p.bp.onboarding.bootstrap \
+   -DinteractiveMode=false \
+   -DarchetypeArtifactId=maven-archetype-quickstart
+```
+
+## **7. Swagger URLs**
+
+After starting the application, API documentation is available at the following endpoints:
+
+1.  Swagger UI  
+    [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+    
+2.  OpenAPI JSON  
+    [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
