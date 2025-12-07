@@ -176,79 +176,113 @@ If you want it as a single module, mimic this structure via packages.
 ### 3.2 Package structure (inside service)
 
 ```css
-com.yourcompany.p2p.bp.onboarding
- ├─ domain
- │   ├─ model
- │   │   ├─ BusinessPartner.java
- │   │   ├─ OnboardingCase.java
- │   │   ├─ value
- │   │   │   ├─ BusinessPartnerId.java
- │   │   │   ├─ TaxId.java
- │   │   │   ├─ BankAccount.java
- │   │   │   ├─ Address.java
- │   │   │   └─ ContactPerson.java
- │   ├─ event
- │   │   ├─ BusinessPartnerOnboardingStarted.java
- │   │   ├─ BusinessPartnerVerified.java
- │   │   └─ BusinessPartnerOnboarded.java
- │   ├─ repository
- │   │   ├─ BusinessPartnerRepository.java
- │   │   └─ OnboardingCaseRepository.java
- │   └─ service (optional domain services)
- │       └─ RiskAssessmentDomainService.java
- │
- ├─ application
- │   ├─ command
- │   │   ├─ StartOnboardingCommand.java
- │   │   ├─ SubmitDocumentsCommand.java
- │   │   ├─ CompleteComplianceCheckCommand.java
- │   │   ├─ ApproveOnboardingCommand.java
- │   │   └─ handler
- │   │       ├─ StartOnboardingHandler.java
- │   │       ├─ SubmitDocumentsHandler.java
- │   │       ├─ CompleteComplianceCheckHandler.java
- │   │       └─ ApproveOnboardingHandler.java
- │   ├─ query
- │   │   ├─ GetOnboardingStatusQuery.java
- │   │   ├─ SearchBusinessPartnersQuery.java
- │   │   └─ handler
- │   │       ├─ GetOnboardingStatusHandler.java
- │   │       └─ SearchBusinessPartnersHandler.java
- │   └─ port
- │       ├─ in
- │       │   ├─ OnboardBusinessPartnerUseCase.java
- │       │   └─ BusinessPartnerQueryUseCase.java
- │       └─ out
- │           ├─ DomainEventPublisher.java
- │           ├─ ComplianceCheckPort.java
- │           └─ NotificationPort.java
- │
- ├─ adapters
- │   ├─ in
- │   │   ├─ rest
- │   │   │   ├─ OnboardingCommandController.java
- │   │   │   └─ OnboardingQueryController.java
- │   │   └─ kafka
- │   │       └─ ComplianceResultListener.java
- │   └─ out
- │       ├─ persistence
- │       │   ├─ JpaBusinessPartnerRepository.java
- │       │   ├─ JpaOnboardingCaseRepository.java
- │       │   └─ entity
- │       │       ├─ BusinessPartnerEntity.java
- │       │       └─ OnboardingCaseEntity.java
- │       ├─ kafka
- │       │   ├─ KafkaDomainEventPublisher.java
- │       │   └─ eventpayload
- │       │       └─ BusinessPartnerOnboardedPayload.java
- │       └─ notification
- │           └─ NotificationAdapter.java
- │
- └─ config
-     ├─ OnboardingServiceConfig.java
-     ├─ KafkaConfig.java
-     └─ SwaggerConfig.java
-``` 
+ms-p2p-bp-onboarding-service/
+├── README.md
+├── pom.xml                             <-- parent pom (multi-module build)
+├── docs/
+│   ├── architecture.md
+│   ├── sequence-diagrams/
+│   │   ├── onboarding-start.png
+│   │   └── compliance-flow.png
+│   └── api-specs/
+│       └── onboarding-openapi.yaml
+│
+├── bp-onboarding-domain/               <-- PURE DOMAIN
+│   ├── pom.xml
+│   └── src/main/java/com/company/p2p/bp/onboarding/domain/
+│       ├── model/
+│       │   ├── BusinessPartner.java
+│       │   ├── OnboardingCase.java
+│       │   ├── value/
+│       │   │   ├── BusinessPartnerId.java
+│       │   │   ├── TaxId.java
+│       │   │   ├── BankAccount.java
+│       │   │   ├── Address.java
+│       │   │   └── ContactPerson.java
+│       ├── event/
+│       │   ├── BusinessPartnerOnboardingStarted.java
+│       │   ├── BusinessPartnerVerified.java
+│       │   └── BusinessPartnerOnboarded.java
+│       ├── repository/
+│       │   ├── BusinessPartnerRepository.java
+│       │   └── OnboardingCaseRepository.java
+│       └── service/
+│           └── RiskAssessmentDomainService.java
+│
+├── bp-onboarding-application/          <-- USE CASE / PORTS / CQRS
+│   ├── pom.xml
+│   └── src/main/java/com/company/p2p/bp/onboarding/application/
+│       ├── port/
+│       │   ├── in/
+│       │   │   ├── OnboardBusinessPartnerUseCase.java
+│       │   │   └── BusinessPartnerQueryUseCase.java
+│       │   └── out/
+│       │       ├── DomainEventPublisher.java
+│       │       ├── ComplianceCheckPort.java
+│       │       └── NotificationPort.java
+│       ├── command/
+│       │   ├── StartOnboardingCommand.java
+│       │   ├── SubmitDocumentsCommand.java
+│       │   ├── CompleteComplianceCheckCommand.java
+│       │   ├── ApproveOnboardingCommand.java
+│       │   └── handler/
+│       │       ├── StartOnboardingHandler.java
+│       │       ├── SubmitDocumentsHandler.java
+│       │       ├── CompleteComplianceCheckHandler.java
+│       │       └── ApproveOnboardingHandler.java
+│       ├── query/
+│       │   ├── GetOnboardingStatusQuery.java
+│       │   ├── SearchBusinessPartnersQuery.java
+│       │   └── handler/
+│       │       ├── GetOnboardingStatusHandler.java
+│       │       └── SearchBusinessPartnersHandler.java
+│
+├── bp-onboarding-adapters/             <-- INFRASTRUCTURE IMPLEMENTATIONS
+│   ├── pom.xml
+│   └── src/main/java/com/company/p2p/bp/onboarding/adapters/
+│       ├── in/
+│       │   ├── rest/
+│       │   │   ├── OnboardingCommandController.java
+│       │   │   └── OnboardingQueryController.java
+│       │   └── kafka/
+│       │       └── ComplianceResultListener.java
+│       └── out/
+│           ├── persistence/
+│           │   ├── JpaBusinessPartnerRepository.java
+│           │   ├── JpaOnboardingCaseRepository.java
+│           │   └── entity/
+│           │       ├── BusinessPartnerEntity.java
+│           │       └── OnboardingCaseEntity.java
+│           ├── kafka/
+│           │   ├── KafkaDomainEventPublisher.java
+│           │   └── eventpayload/
+│           │       └── BusinessPartnerOnboardedPayload.java
+│           └── notification/
+│               └── NotificationAdapter.java
+│
+├── bp-onboarding-bootstrap/            <-- SPRING BOOT APP + CONFIG
+│   ├── pom.xml
+│   └── src/main/java/com/company/p2p/bp/onboarding/bootstrap/
+│       ├── Application.java            <-- Spring Boot main entry point
+│       └── config/
+│           ├── KafkaConfig.java
+│           ├── WebConfig.java
+│           └── BeanConfig.java         <-- wires Domain + Application beans
+│
+└── infrastructure/
+    ├── docker/
+    │   ├── docker-compose.yaml
+    │   ├── kafka.yml
+    │   └── postgres.yml
+    ├── scripts/
+    │   ├── init-db.sql
+    │   ├── flyway-migrations/
+    │   │   └── V1__create_bp_tables.sql
+    └── k8s/
+        ├── deployment.yaml
+        ├── service.yaml
+        └── configmap.yaml
+```
 
 ----------
 
@@ -320,3 +354,26 @@ com.yourcompany.p2p.bp.onboarding
 11.  BP Master, Finance, Procurement microservices consume & update their own models.
 
 ----------
+
+
+# Architectural Meaning
+
+### 🔹 Domain
+
+Pure DDD model. No Spring, no DB annotations.
+
+### 🔹 Application
+
+Use cases, CQRS command/query handlers, ports.
+
+### 🔹 Adapters
+
+Implement outbound and inbound ports. REST controllers, Kafka listeners, DB repositories.
+
+### 🔹 Bootstrap
+
+Wires everything + Spring Boot + config.
+
+
+----------
+
