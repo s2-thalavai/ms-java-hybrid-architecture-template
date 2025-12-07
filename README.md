@@ -1,4 +1,4 @@
-# **Hybrid Architecture (best practice):**
+# **Hybrid Architecture:**
 
 ## **DDD + Hexagonal Architecture + Event-Driven + Modularity**
 
